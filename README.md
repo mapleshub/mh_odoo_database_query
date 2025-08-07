@@ -3,10 +3,10 @@
 MaplesHub Odoo Database Query
 -----------------------------
 
---------
+
 Overview
 --------
---------
+
 The Database Query module empowers technical users and administrators to execute SQL queries directly from the Odoo interface. Designed for power users and developers, it provides a safe and controlled environment to run SELECT queries, preview results, and export data—all without leaving Odoo.
 
 Key Features
