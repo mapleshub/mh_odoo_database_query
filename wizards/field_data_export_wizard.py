@@ -56,7 +56,7 @@ class FieldDataExportWizard(models.TransientModel):
     _rec_name = 'name'
 
     name = fields.Char(string='Name', default="Query")
-    query_str = fields.Text(string="Query Input", required=1)
+    query_str = fields.Text(string="Query Input", required=True)
     excel_file = fields.Binary('Excel Report')
     file_name = fields.Char('Excel File', size=64)
     show_file = fields.Boolean(default=False)
@@ -96,8 +96,11 @@ class FieldDataExportWizard(models.TransientModel):
         return True
 
     def generate_data_all(self):
-        sql = self.query_str
+        sql = self.query_str.strip().lower()
         try:
+            # Check if the query starts with 'select'
+            if not sql.startswith('select'):
+                raise ValueError("Only SELECT queries are allowed.")
             self._cr.execute(sql)
         except Exception as msg:
             raise UserError(_("Query is not correct: \n %s", msg))
