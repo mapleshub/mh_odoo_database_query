@@ -7,48 +7,47 @@
                 <form>
                     <div class="oe_title">
                         <field name="name" invisible="1"/>
+                        <separator string="Write Select Query" class="mh-sep mh-c-red"/>
                         <h4>
-                            <field name="query_str" placeholder="Write a query" style="background:Blue;" />
+                            <field name="query_str" placeholder="Write a query" class="mh-query"
+                                   options="{'codeview': true}"/>
                         </h4>
                     </div>
-                    <separator/>
+
+                    <separator string="Export Options" class="mh-sep mh-c-grey"/>
                     <div class="btn-group">
                         <button name="action_show" type="object" string="Show" icon="fa-list"
-                                class="btn btn-success" style="width: 250px; margin : 10px;"/>
+                                class="btn btn-success mh-btn"/>
                         <button name="action_export" type="object" string="Export" icon="fa-download"
-                                class="btn btn-primary" style="width: 250px; margin : 10px"/>
+                                class="btn btn-primary mh-btn"/>
                         <button name="action_reload" type="object" string="Reload" icon="fa-refresh"
-                                class="btn btn-danger" style="width: 250px; margin : 10px"/>
+                                class="btn btn-danger mh-btn"/>
                     </div>
-                    <separator/>
-                    <group>
+
+                    <group string="Download" class="mh-sep mh-c-green" invisible="show_file == False">
                         <group>
-                            <field name="show_file" invisible="1" />
-                            <field name="excel_file" readonly="1" filename="file_name"
-                                   invisible = "show_file == False"/>
-                            <field name="file_name" invisible="1" />
+                            <field name="show_file" invisible="1"/>
+                            <field name="excel_file" readonly="1" filename="file_name" nolabel="1"
+                                   invisible="show_file == False"/>
+                            <field name="file_name" invisible="1"/>
                         </group>
-                        <group></group>
                     </group>
-                    <separator/>
-                    <field name="report_preview" readonly="1" force_save="1"/>
+
+                    <separator string="Preview" class="mh-sep mh-c-green" invisible="not report_preview"/>
+                    <div class="mh-overflow">
+                        <field name="report_preview" readonly="1" force_save="1"/>
+                    </div>
                 </form>
             </field>
         </record>
 
-        <!--Action View-->
-        <record id="action_field_data_export" model="ir.actions.act_window">
+        <record id="action_data_query" model="ir.actions.act_window">
             <field name="name">Data Export</field>
             <field name="res_model">field.data.export.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">current</field>
         </record>
 
-        <menuitem
-                name="Data Export"
-                id="menu_field_data_export"
-                parent="base.next_id_9"
-                action="action_field_data_export"
-        />
+        <menuitem name="Data Query" id="menu_data_query" parent="base.next_id_9" action="action_data_query"/>
     </data>
 </odoo>

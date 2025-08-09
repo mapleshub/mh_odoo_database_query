@@ -1,3 +1,25 @@
+# -*- coding: utf-8 -*-
+#############################################################################
+#
+#    Mapleshub Solutions.
+#
+#    Copyright (C) 2024-TODAY Mapleshub Solutions(<https://www.mapleshub.com>)
+#    Author: Mapleshub Solutions(<https://www.mapleshub.com>)
+#
+#    You can modify it under the terms of the GNU LESSER
+#    GENERAL PUBLIC LICENSE (LGPL v3), Version 3.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU LESSER GENERAL PUBLIC LICENSE (LGPL v3) for more details.
+#
+#    You should have received a copy of the GNU LESSER GENERAL PUBLIC LICENSE
+#    (LGPL v3) along with this program.
+#    If not, see <http://www.gnu.org/licenses/>.
+#
+#############################################################################
+
 import base64
 import io
 import xlwt
@@ -31,18 +53,20 @@ def _write_in_export_sheet(worksheet, data):
 
 def get_table_structure():
     table = """
-                <table border="1" class="o_list_view table-bordered o_list_view_ungrouped">
-                  <thead>
+        <div>
+            <table class="table table-hover table-striped">
+              <thead>
                 {thead}
-                  </thead>
-                  <tbody>
+              </thead>
+              <tbody>
                 {tbody}
-                  </tbody>
-                </table>
+              </tbody>
+            </table>
+        </div>
             """
     thead = """
-                <tr style="text-align: center;font-weight:bold ">
-                {th}
+                <tr style="text-align: center;font-weight:bold; padding: 1px 2px; ">
+                    {th}
                 </tr>
             """
     th = """<th style='border: 1px solid #C0C0C0;position: sticky;top: 0;background: #ddd;padding: 3px;'>{}</th>\n"""
@@ -53,6 +77,7 @@ def get_table_structure():
 
 class FieldDataExportWizard(models.TransientModel):
     _name = 'field.data.export.wizard'
+    _description = 'Field data export wizard'
     _rec_name = 'name'
 
     name = fields.Char(string='Name', default="Query")
@@ -72,28 +97,36 @@ class FieldDataExportWizard(models.TransientModel):
         workbook = xlwt.Workbook(encoding="UTF-8")
         worksheet = workbook.add_sheet('Export')
         data = self.generate_data_all()
-        _write_in_export_sheet(worksheet, data)
-        file_data = io.BytesIO()
-        workbook.save(file_data)
-        self.show_file = True
-        self.excel_file = base64.b64encode(file_data.getvalue())
-        self.file_name = filename
-        return True
+        if data:
+            _write_in_export_sheet(worksheet, data)
+            file_data = io.BytesIO()
+            workbook.save(file_data)
+            self.show_file = True
+            self.excel_file = base64.b64encode(file_data.getvalue())
+            self.file_name = filename
+        else:
+            self.file_name = None
+            view_result = "<h2>Query return empty values</h2>"
+            self.write({'report_preview': view_result})
 
     def action_show(self):
         data = self.generate_data_all()
-        column_header = [key_rec for key_rec in list(data[0].keys())]
-        table, thead, th, tr, td = get_table_structure()
-        head = thead.format(th="".join(map(th.format, column_header)))
-        body = ''
-        for data_dic in data:
-            tbl_row = "<tr>"
-            for val in data_dic.values():
-                tbl_row += "<td>{}</td>".format(val)
-            body += tbl_row + "</tr>"
-        view_result = table.format(thead=head, tbody=body)
-        self.write({'report_preview': view_result})
-        return True
+        if data:
+            column_header = [key_rec for key_rec in list(data[0].keys())]
+            table, thead, th, tr, td = get_table_structure()
+            head = thead.format(th="".join(map(th.format, column_header)))
+            body = ''
+            for data_dic in data:
+                tbl_row = "<tr>"
+                for val in data_dic.values():
+                    tbl_row += "<td>{}</td>".format(val)
+                body += tbl_row + "</tr>"
+            view_result = table.format(thead=head, tbody=body)
+            self.write({'report_preview': view_result})
+            return True
+        else:
+            view_result = "<h2>Query return empty values</h2>"
+            self.write({'report_preview': view_result})
 
     def generate_data_all(self):
         sql = self.query_str.strip().lower()
@@ -104,8 +137,8 @@ class FieldDataExportWizard(models.TransientModel):
             self._cr.execute(sql)
         except Exception as msg:
             raise UserError(_("Query is not correct: \n %s", msg))
-        results = self.env.cr.dictfetchall()
-        return results
+
+        return self.env.cr.dictfetchall()
 
     def action_reload(self):
         return {
