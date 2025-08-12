@@ -22,9 +22,6 @@
 {
     'name': 'Mapleshub Odoo Database Query',
     'summary': "Direct Database query to view and export in excel",
-    'summary': """
-                Database query from odoo backend, it only allow select query to preview and export in excel
-    """,
     'description': """
                 Database query from odoo backend, it only allow select query to preview and export in excel
     """,
