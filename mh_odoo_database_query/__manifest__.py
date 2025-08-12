@@ -31,7 +31,7 @@
     'website': "https://www.mapleshub.com",
     'support': 'service@mapleshub.com',
     'category': 'Tools',
-    'version': '18.0.0.0.1',
+    'version': '17.0.0.0.1',
     'sequence': 1,
     'license': 'AGPL-3',
     'depends': ['base'],
