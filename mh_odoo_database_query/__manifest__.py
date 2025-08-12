@@ -35,7 +35,7 @@
     'sequence': 1,
     'license': 'AGPL-3',
     'depends': ['base'],
-    'images': ["static/description/banner.gif"],
+    'images': ["static/description/banner.png"],
     'data': [
         'security/ir.model.access.csv',
         'wizards/field_data_export_wizard.xml',
